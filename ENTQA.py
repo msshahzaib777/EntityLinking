@@ -20,7 +20,8 @@ from datasets import Dataset
 df = pd.DataFrame.from_records(examples_subset)
 dataset = Dataset.from_pandas(df).train_test_split(test_size=.02)
 print(dataset)
-
+from datasets import set_caching_enabled
+set_caching_enabled(False)
 
 def preprocess_function(examples):
 
