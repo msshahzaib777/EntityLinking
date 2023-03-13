@@ -56,11 +56,11 @@ def preprocess_function(examples):
 
 
         if end_positions > 1024:
-          start_positions, end_positions = sep_idx, sep_idx+1
+          start_positions, end_positions = 0,0
       else:
-        start_positions, end_positions = sep_idx, sep_idx+1
+        start_positions, end_positions = 0,0
     except:
-      start_positions, end_positions = sep_idx, sep_idx+1
+      start_positions, end_positions = 0,0
 
     encodings.update({'start_positions': start_positions,
                       'end_positions': end_positions,
@@ -81,11 +81,11 @@ training_args = TrainingArguments(
     output_dir="./results",
     evaluation_strategy="epoch",
     learning_rate=7e-5,
-    per_device_train_batch_size=16,
-    per_device_eval_batch_size=16,
-    gradient_accumulation_steps = 3,
+    per_device_train_batch_size=8,
+    per_device_eval_batch_size=8,
+    gradient_accumulation_steps = 6,
     warmup_ratio= 0.2,
-    num_train_epochs=10,
+    num_train_epochs=4,
     save_total_limit=1,
     weight_decay=0.01,
     fp16=True,
