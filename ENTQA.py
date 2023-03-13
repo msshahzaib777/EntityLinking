@@ -29,7 +29,7 @@ set_caching_enabled(False)
 def preprocess_function(examples):
 
     # questions = [q.strip() for q in examples["question"]]   #Surfaceform + Description
-    question = examples["candidate"]["description"]
+    question = examples["candidate"]["text"] +" : "  + examples["candidate"]["description"]
     context = examples["text"]
     input_pairs = [question, context]
     encodings = tokenizer.encode_plus(input_pairs, pad_to_max_length=True, max_length=1024, add_special_tokens=True, return_tensors="pt")
