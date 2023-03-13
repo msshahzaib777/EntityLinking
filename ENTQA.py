@@ -5,28 +5,18 @@ model = AutoModelForQuestionAnswering.from_pretrained(ckpt)
 
 import pickle
 
-with open('examples.pickle', 'rb') as f:
-    examples = pickle.load(f)
-print("Length ",len(examples))
-
-from random import sample  
-examples_subset = sample(examples,51000)
-
-del examples
-
 import pandas as pd
 from datasets import Dataset 
 
-df = pd.DataFrame.from_records(examples_subset)
-dataset = Dataset.from_pandas(df).train_test_split(test_size=.02)
-print(dataset)
+
+with open('dataset.pickle', 'rb') as f:
+    dataset = pickle.load(f)
+
 from datasets import set_caching_enabled
 set_caching_enabled(False)
 
 def preprocess_function(examples):
-
-    # questions = [q.strip() for q in examples["question"]]   #Surfaceform + Description
-    question = examples["candidate"]["text"] + " : " + examples["candidate"]["description"]
+    question = examples["candidate"]["description"]
     context = examples["text"]
     input_pairs = [question, context]
     encodings = tokenizer.encode_plus(input_pairs, pad_to_max_length=True, max_length=1024)
@@ -53,7 +43,7 @@ def preprocess_function(examples):
 
 
         if end_positions > 1024:
-          start_positions, end_positions = 0, 0
+          start_positions, end_positions = sep_idx, sep_idx+1
       else:
         start_positions, end_positions = sep_idx, sep_idx+1
     except:
@@ -78,11 +68,11 @@ training_args = TrainingArguments(
     output_dir="./results",
     evaluation_strategy="epoch",
     learning_rate=7e-5,
-    per_device_train_batch_size=8,
-    per_device_eval_batch_size=8,
-    gradient_accumulation_steps = 6,
+    per_device_train_batch_size=16,
+    per_device_eval_batch_size=16,
+    gradient_accumulation_steps = 3,
     warmup_ratio= 0.2,
-    num_train_epochs=4,
+    num_train_epochs=10,
     save_total_limit=1,
     weight_decay=0.01,
     fp16=True,
