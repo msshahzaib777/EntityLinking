@@ -5,17 +5,30 @@ model = AutoModelForQuestionAnswering.from_pretrained(ckpt)
 
 import pickle
 
+with open('examples.pickle', 'rb') as f:
+    examples = pickle.load(f)
+print("Length ",len(examples))
+
+from random import sample  
+examples_subset = sample(examples,300000)
+
+del examples
+
 import pandas as pd
 from datasets import Dataset 
 
+df = pd.DataFrame.from_records(examples_subset)
+dataset = Dataset.from_pandas(df).train_test_split(test_size=.02)
 
-with open('dataset.pickle', 'rb') as f:
-    dataset = pickle.load(f)
+with open('testset.pickle', 'wb') as handle:
+    pickle.dump(dataset["test"], handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 from datasets import set_caching_enabled
 set_caching_enabled(False)
 
 def preprocess_function(examples):
+
+    # questions = [q.strip() for q in examples["question"]]   #Surfaceform + Description
     question = examples["candidate"]["description"]
     context = examples["text"]
     input_pairs = [question, context]
