@@ -32,7 +32,7 @@ def preprocess_function(examples):
     question = examples["candidate"]["description"]
     context = examples["text"]
     input_pairs = [question, context]
-    encodings = tokenizer.encode_plus(input_pairs, pad_to_max_length=True, max_length=1024)
+    encodings = tokenizer.encode_plus(input_pairs, pad_to_max_length=True, max_length=1024, add_special_tokens=True, return_tensors="pt")
     context_encodings = tokenizer.encode_plus(context)
     sep_idx = encodings['input_ids'].index(tokenizer.sep_token_id)
     try:
