@@ -2,6 +2,7 @@ from transformers import AutoTokenizer, AutoModelForQuestionAnswering
 ckpt = "mrm8488/longformer-base-4096-finetuned-squadv2"
 tokenizer = AutoTokenizer.from_pretrained(ckpt)
 model = AutoModelForQuestionAnswering.from_pretrained(ckpt)
+model.gradient_checkpointing_enable()
 
 import pickle
 
